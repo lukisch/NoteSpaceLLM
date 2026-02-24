@@ -1,6 +1,6 @@
 # NoteSpaceLLM
 
-Ein privater NotebookLM-Clone für lokale Dokumentenanalyse und Berichterstellung.
+Ein NotebookLM-Ersatz für lokale Dokumentenanalyse und Berichterstellung.
 
 ## Features
 
