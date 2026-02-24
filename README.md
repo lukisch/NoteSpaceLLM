@@ -1,6 +1,6 @@
 # NoteSpaceLLM
 
-Ein NotebookLM-Ersatz für lokale Dokumentenanalyse und Berichterstellung.
+Ein lokaler, datenschutzfreundlicher Ersatz für Google NotebookLM zur Dokumentenanalyse und Berichterstellung.
 
 ## Features
 
@@ -156,7 +156,7 @@ Basiert auf dem BACH-System (Personal Agentic OS) und nutzt dessen:
 
 ## Lizenz
 
-Privates Projekt - Nutzung nach Absprache.
+MIT License - Siehe [LICENSE](LICENSE) Datei.
 
 ---
 
