@@ -156,7 +156,9 @@ Basiert auf dem BACH-System (Personal Agentic OS) und nutzt dessen:
 
 ## Lizenz
 
-MIT License - Siehe [LICENSE](LICENSE) Datei.
+AGPL v3 - Siehe [LICENSE](LICENSE)
+
+Dieses Projekt verwendet PyQt6 (GPL) und PyMuPDF (AGPL).
 
 ---
 
