@@ -20,7 +20,9 @@ try:
         QMainWindow, QWidget, QVBoxLayout, QHBoxLayout, QSplitter,
         QMenuBar, QMenu, QToolBar, QStatusBar, QMessageBox,
         QFileDialog, QInputDialog, QApplication, QProgressDialog,
-        QDockWidget, QTabWidget
+        QDockWidget, QTabWidget, QDialog, QComboBox, QLabel,
+        QDialogButtonBox, QFormLayout, QGroupBox, QLineEdit,
+        QPushButton
     )
     from PyQt6.QtCore import Qt, QSize, QTimer, pyqtSlot
     from PyQt6.QtGui import QAction, QIcon, QKeySequence
@@ -165,23 +167,16 @@ class MainWindow(QMainWindow if PYQT_AVAILABLE else object):
         # LLM menu
         llm_menu = menubar.addMenu("&LLM")
 
-        ollama_action = QAction("Ollama verwenden", self)
-        ollama_action.triggered.connect(lambda: self._set_llm_provider("ollama"))
-        llm_menu.addAction(ollama_action)
-
-        openai_action = QAction("OpenAI verwenden", self)
-        openai_action.triggered.connect(lambda: self._set_llm_provider("openai"))
-        llm_menu.addAction(openai_action)
-
-        anthropic_action = QAction("Anthropic verwenden", self)
-        anthropic_action.triggered.connect(lambda: self._set_llm_provider("anthropic"))
-        llm_menu.addAction(anthropic_action)
+        settings_action = QAction("Modell &wechseln...", self)
+        settings_action.setShortcut("Ctrl+L")
+        settings_action.triggered.connect(self._llm_settings)
+        llm_menu.addAction(settings_action)
 
         llm_menu.addSeparator()
 
-        settings_action = QAction("LLM-Einstellungen...", self)
-        settings_action.triggered.connect(self._llm_settings)
-        llm_menu.addAction(settings_action)
+        refresh_action = QAction("Modelle &aktualisieren", self)
+        refresh_action.triggered.connect(self._refresh_models)
+        llm_menu.addAction(refresh_action)
 
         # RAG menu
         rag_menu = menubar.addMenu("&RAG")
@@ -435,21 +430,171 @@ class MainWindow(QMainWindow if PYQT_AVAILABLE else object):
         if self._current_project:
             self._current_project.documents.deselect_all()
 
-    def _set_llm_provider(self, provider: str):
-        """Set the LLM provider."""
-        if self._current_project:
-            self._current_project.settings.llm_provider = provider
-            self._init_llm_client()
-            self.statusbar.showMessage(f"LLM-Provider: {provider}")
+    def _refresh_models(self):
+        """Refresh the list of available models from all providers."""
+        self.statusbar.showMessage("Modelle werden abgefragt...")
+        QApplication.processEvents()
+
+        available = {}
+        # Ollama
+        try:
+            from ..llm.ollama_client import OllamaClient
+            client = OllamaClient.__new__(OllamaClient)
+            client.base_url = "http://localhost:11434"
+            client._is_available = False
+            client.model = ""
+            client._check_availability()
+            if client.is_available:
+                models = client.get_models()
+                available["ollama"] = models
+                self.statusbar.showMessage(f"Ollama: {len(models)} Modelle gefunden")
+            else:
+                self.statusbar.showMessage("Ollama nicht erreichbar")
+        except Exception as e:
+            self.statusbar.showMessage(f"Ollama-Fehler: {e}")
+
+        return available
 
     def _llm_settings(self):
-        """Show LLM settings dialog."""
-        QMessageBox.information(
-            self,
-            "LLM-Einstellungen",
-            f"Aktueller Provider: {self._current_project.settings.llm_provider if self._current_project else 'Keiner'}\n"
-            f"Modell: {self._current_project.settings.llm_model if self._current_project else 'Keines'}"
+        """Show LLM settings dialog with provider and model selection."""
+        dialog = QDialog(self)
+        dialog.setWindowTitle("LLM-Einstellungen")
+        dialog.setMinimumWidth(450)
+
+        layout = QVBoxLayout(dialog)
+
+        # Provider selection
+        provider_group = QGroupBox("Provider")
+        provider_layout = QFormLayout(provider_group)
+
+        provider_combo = QComboBox()
+        provider_combo.addItems(["ollama", "openai", "anthropic"])
+
+        # Set current provider
+        current_provider = "ollama"
+        current_model = "llama3"
+        if self._current_project:
+            current_provider = self._current_project.settings.llm_provider
+            current_model = self._current_project.settings.llm_model
+
+        idx = provider_combo.findText(current_provider)
+        if idx >= 0:
+            provider_combo.setCurrentIndex(idx)
+
+        provider_layout.addRow("Provider:", provider_combo)
+        layout.addWidget(provider_group)
+
+        # Model selection
+        model_group = QGroupBox("Modell")
+        model_layout = QVBoxLayout(model_group)
+
+        model_combo = QComboBox()
+        model_combo.setEditable(True)
+        model_combo.setMinimumWidth(300)
+
+        status_label = QLabel("")
+        status_label.setStyleSheet("color: #666; font-size: 11px;")
+
+        refresh_btn = QPushButton("Modelle laden")
+
+        model_layout.addWidget(QLabel("Verfuegbare Modelle:"))
+        model_layout.addWidget(model_combo)
+
+        btn_row = QHBoxLayout()
+        btn_row.addWidget(refresh_btn)
+        btn_row.addWidget(status_label)
+        btn_row.addStretch()
+        model_layout.addLayout(btn_row)
+
+        layout.addWidget(model_group)
+
+        # OpenAI / Anthropic API Key hint
+        api_hint = QLabel(
+            "Fuer OpenAI/Anthropic: API-Key muss als Umgebungsvariable gesetzt sein\n"
+            "(OPENAI_API_KEY bzw. ANTHROPIC_API_KEY)"
         )
+        api_hint.setStyleSheet("color: #888; font-size: 10px;")
+        layout.addWidget(api_hint)
+
+        # Buttons
+        button_box = QDialogButtonBox(
+            QDialogButtonBox.StandardButton.Ok | QDialogButtonBox.StandardButton.Cancel
+        )
+        button_box.accepted.connect(dialog.accept)
+        button_box.rejected.connect(dialog.reject)
+        layout.addWidget(button_box)
+
+        # Default model lists for cloud providers
+        OPENAI_MODELS = ["gpt-4o", "gpt-4o-mini", "gpt-4-turbo", "gpt-3.5-turbo"]
+        ANTHROPIC_MODELS = [
+            "claude-sonnet-4-6", "claude-haiku-4-5-20251001",
+            "claude-3-5-sonnet-20241022", "claude-3-haiku-20240307"
+        ]
+
+        def load_models_for_provider(provider: str):
+            """Load available models for the selected provider."""
+            model_combo.clear()
+            status_label.setText("Lade...")
+            QApplication.processEvents()
+
+            if provider == "ollama":
+                try:
+                    from ..llm.ollama_client import OllamaClient
+                    client = OllamaClient.__new__(OllamaClient)
+                    client.base_url = "http://localhost:11434"
+                    client._is_available = False
+                    client.model = ""
+                    client._check_availability()
+
+                    if client.is_available:
+                        models = client.get_models()
+                        if models:
+                            model_combo.addItems(models)
+                            status_label.setText(f"{len(models)} lokale Modelle gefunden")
+                        else:
+                            status_label.setText("Ollama laeuft, aber keine Modelle installiert")
+                    else:
+                        status_label.setText("Ollama nicht erreichbar (http://localhost:11434)")
+                except Exception as e:
+                    status_label.setText(f"Fehler: {e}")
+
+            elif provider == "openai":
+                model_combo.addItems(OPENAI_MODELS)
+                status_label.setText("Standard-Modelle (editierbar)")
+
+            elif provider == "anthropic":
+                model_combo.addItems(ANTHROPIC_MODELS)
+                status_label.setText("Standard-Modelle (editierbar)")
+
+            # Try to select current model
+            idx = model_combo.findText(current_model)
+            if idx >= 0:
+                model_combo.setCurrentIndex(idx)
+            elif model_combo.count() > 0:
+                model_combo.setCurrentIndex(0)
+
+        # Connect signals
+        provider_combo.currentTextChanged.connect(load_models_for_provider)
+        refresh_btn.clicked.connect(lambda: load_models_for_provider(provider_combo.currentText()))
+
+        # Initial load
+        load_models_for_provider(current_provider)
+
+        # Show dialog
+        if dialog.exec() == QDialog.DialogCode.Accepted:
+            new_provider = provider_combo.currentText()
+            new_model = model_combo.currentText().strip()
+
+            if not new_model:
+                QMessageBox.warning(self, "LLM", "Kein Modell ausgewaehlt.")
+                return
+
+            if self._current_project:
+                self._current_project.settings.llm_provider = new_provider
+                self._current_project.settings.llm_model = new_model
+
+            self._init_llm_client()
+            self.statusbar.showMessage(f"LLM: {new_provider} / {new_model}")
 
     def _show_about(self):
         """Show about dialog."""
