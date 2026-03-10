@@ -1054,6 +1054,11 @@ Verwende Markdown-Formatierung."""
         """Initialize the RAG engine with ChromaDB and Ollama Embeddings."""
         try:
             from ..rag.engine import RAGEngine
+            from ..core.app_config import get_app_config
+
+            app_cfg = get_app_config()
+            ollama_url = app_cfg.ollama_base_url
+            llm_model = app_cfg.llm_model or "llama3.2"
 
             # Storage-Verzeichnis
             storage_dir = Path.home() / "NoteSpaceLLM" / "storage" / "chroma_db"
@@ -1063,15 +1068,12 @@ Verwende Markdown-Formatierung."""
                 persist_directory=str(storage_dir),
                 collection_name="notespace_documents",
                 embedding_model="nomic-embed-text",
-                llm_model="llama3.2"
+                llm_model=llm_model,
+                ollama_base_url=ollama_url,
+                api_key=app_cfg.ollama_api_key
             )
 
-            # Test connection
-            status = self._rag_engine.test_connection()
-            if status.get("embeddings"):
-                logger.info("RAG Engine erfolgreich initialisiert")
-            else:
-                logger.warning("RAG Engine: Embeddings nicht verfuegbar")
+            logger.info(f"RAG Engine initialisiert (URL: {ollama_url})")
 
         except Exception as e:
             logger.error(f"RAG Engine Initialisierung fehlgeschlagen: {e}")

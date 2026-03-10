@@ -51,13 +51,11 @@ class ProjectSettings:
     language: str = "de"
 
     def to_dict(self) -> dict:
+        # LLM connection settings (provider, model, URL, key) are stored in
+        # ~/.notespacellm/config.json (app_config), NOT in project.json.
         return {
             "output_directory": str(self.output_directory),
             "output_profile": self.output_profile,
-            "llm_provider": self.llm_provider,
-            "llm_model": self.llm_model,
-            "ollama_base_url": self.ollama_base_url,
-            # ollama_api_key intentionally NOT saved to project.json (security)
             "max_context_tokens": self.max_context_tokens,
             "language": self.language
         }
@@ -69,9 +67,9 @@ class ProjectSettings:
         return cls(
             output_directory=Path(data.get("output_directory", "./output")),
             output_profile=data.get("output_profile", "default"),
-            llm_provider=data.get("llm_provider", app_cfg.llm_provider),
-            llm_model=data.get("llm_model", app_cfg.llm_model),
-            ollama_base_url=data.get("ollama_base_url", app_cfg.ollama_base_url),
+            llm_provider=app_cfg.llm_provider,
+            llm_model=app_cfg.llm_model,
+            ollama_base_url=app_cfg.ollama_base_url,
             ollama_api_key=app_cfg.ollama_api_key,
             max_context_tokens=data.get("max_context_tokens", 8000),
             language=data.get("language", "de")

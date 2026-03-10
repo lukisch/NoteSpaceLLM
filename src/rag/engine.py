@@ -68,7 +68,8 @@ ANTWORT:"""
         collection_name: str = DEFAULT_COLLECTION,
         embedding_model: str = "nomic-embed-text",
         llm_model: str = "llama3.2",
-        ollama_base_url: str = "http://localhost:11434"
+        ollama_base_url: str = "http://localhost:11434",
+        api_key: str = ""
     ):
         """
         Initialisiert die RAG Engine
@@ -79,6 +80,7 @@ ANTWORT:"""
             embedding_model: Ollama Embedding-Modell
             llm_model: Ollama LLM-Modell für Antwortgenerierung
             ollama_base_url: Ollama Server URL
+            api_key: Optional API key for authenticated Ollama proxy
         """
         self.persist_directory = persist_directory
         self.collection_name = collection_name
@@ -87,20 +89,29 @@ ANTWORT:"""
         # Erstelle Persist-Verzeichnis
         Path(persist_directory).mkdir(parents=True, exist_ok=True)
 
+        # Build auth headers for remote Ollama proxy
+        headers = {}
+        if api_key:
+            headers["Authorization"] = f"Bearer {api_key}"
+
         # Initialisiere Komponenten
         self.embeddings_manager = EmbeddingsManager(
             model_name=embedding_model,
-            base_url=ollama_base_url
+            base_url=ollama_base_url,
+            headers=headers
         )
 
         self.splitter = DocumentSplitter.from_preset("default")
 
         # LLM für Antwortgenerierung
-        self.llm = ChatOllama(
-            model=llm_model,
-            base_url=ollama_base_url,
-            temperature=0.3
-        )
+        llm_kwargs = {
+            "model": llm_model,
+            "base_url": ollama_base_url,
+            "temperature": 0.3,
+        }
+        if headers:
+            llm_kwargs["headers"] = headers
+        self.llm = ChatOllama(**llm_kwargs)
 
         # ChromaDB Vector Store
         self._vectorstore: Optional[Chroma] = None

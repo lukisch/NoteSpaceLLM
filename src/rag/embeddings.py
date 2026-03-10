@@ -36,7 +36,8 @@ class EmbeddingsManager:
     def __init__(
         self,
         model_name: str = DEFAULT_MODEL,
-        base_url: str = "http://localhost:11434"
+        base_url: str = "http://localhost:11434",
+        headers: Optional[dict] = None
     ):
         """
         Initialisiert den Embeddings Manager
@@ -44,9 +45,11 @@ class EmbeddingsManager:
         Args:
             model_name: Name des Embedding-Modells
             base_url: Ollama Server URL
+            headers: Optional HTTP headers (e.g. for Bearer auth)
         """
         self.model_name = model_name
         self.base_url = base_url
+        self._headers = headers or {}
         self._embeddings: Optional[Embeddings] = None
 
     @property
@@ -60,10 +63,14 @@ class EmbeddingsManager:
         """Erstellt die Ollama Embeddings Instanz"""
         logger.info(f"Initialisiere Ollama Embeddings mit Modell: {self.model_name}")
 
-        return OllamaEmbeddings(
-            model=self.model_name,
-            base_url=self.base_url
-        )
+        kwargs = {
+            "model": self.model_name,
+            "base_url": self.base_url,
+        }
+        if self._headers:
+            kwargs["headers"] = self._headers
+
+        return OllamaEmbeddings(**kwargs)
 
     def embed_query(self, text: str) -> List[float]:
         """
