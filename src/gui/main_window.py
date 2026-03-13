@@ -183,8 +183,8 @@ class MainWindow(QMainWindow if PYQT_AVAILABLE else object):
         try:
             # Could load from settings file
             self.resize(1400, 900)
-        except:
-            pass
+        except Exception as e:
+            logger.warning("Could not restore window geometry: %s", e)
 
     def _setup_menu(self):
         """Set up the menu bar."""

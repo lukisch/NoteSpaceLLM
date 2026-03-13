@@ -370,16 +370,6 @@ class DocumentManager:
             return True
         return False
 
-    def update_content(self, doc_id: str, text: str) -> None:
-        """Update extracted text for a document."""
-        doc = self._documents.get(doc_id)
-        if doc:
-            doc.extracted_text = text
-            doc.text_length = len(text)
-            doc.content_hash = hashlib.md5(text.encode()).hexdigest()
-            doc.status = DocumentStatus.READY
-            self._notify_change("update", doc)
-
     def set_status(self, doc_id: str, status: DocumentStatus, error: str = "") -> None:
         """Update document status."""
         doc = self._documents.get(doc_id)
@@ -438,8 +428,8 @@ class DocumentManager:
         for callback in self._on_change_callbacks:
             try:
                 callback(action, document)
-            except Exception:
-                pass
+            except Exception as e:
+                logging.warning("Change callback failed: %s", e)
 
     def save_state(self, filepath: Path) -> None:
         """Save workspace state to file."""
