@@ -12,6 +12,7 @@ Voraussetzung: `claude` CLI muss im PATH sein.
 """
 
 import json
+import re
 import shutil
 import subprocess
 import tempfile
@@ -35,6 +36,7 @@ class ClaudeCodeClient(LLMClient):
     """
 
     CLAUDE_CMD = "claude"  # muss im PATH sein
+    ALLOWED_MODELS = {"sonnet", "opus", "haiku"}
 
     def __init__(self, model: str = "sonnet", mode: str = "api"):
         """
@@ -42,6 +44,8 @@ class ClaudeCodeClient(LLMClient):
             model: Claude-Modell (sonnet, opus, haiku)
             mode: "api" (Hintergrund) oder "chat" (Konsole oeffnet sich)
         """
+        if model not in self.ALLOWED_MODELS:
+            raise ValueError(f"Unbekanntes Modell: {model!r}. Erlaubt: {self.ALLOWED_MODELS}")
         super().__init__(model)
         self.mode = mode
         self._check_availability()
@@ -155,6 +159,10 @@ class ClaudeCodeClient(LLMClient):
 
         # Konsole oeffnen mit initialem Prompt
         import sys
+
+        # Defense-in-depth: Model-String sanitizen bevor er in Shell-Code eingebettet wird
+        safe_model = re.sub(r'[^a-zA-Z0-9._-]', '', self.model)
+
         if sys.platform == "win32":
             # Windows: start cmd mit claude Befehl
             # Der Prompt wird via stdin-Pipe an claude gesendet
@@ -169,21 +177,20 @@ echo.
 echo ================================
 echo Claude Code wird gestartet...
 echo.
-claude --model {self.model} --resume < "{prompt_file}"
+claude --model {safe_model} --resume < "{prompt_file}"
 echo.
 pause
 '''
             bat_file = Path(tempfile.gettempdir()) / "notespacellm_chat.bat"
             bat_file.write_text(bat_content, encoding="utf-8")
             subprocess.Popen(
-                ["start", "cmd", "/k", str(bat_file)],
-                shell=True
+                ["cmd", "/c", "start", "cmd", "/k", str(bat_file)],
             )
         else:
             # Linux/Mac
             subprocess.Popen(
                 ["x-terminal-emulator", "-e", "bash", "-c",
-                 f'cat "{prompt_file}" | claude --model {self.model} --resume; exec bash'],
+                 f'cat "{prompt_file}" | claude --model {safe_model} --resume; exec bash'],
             )
 
         logger.info(f"Chat-Konsole geoeffnet mit Prompt-Datei: {prompt_file}")
