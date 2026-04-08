@@ -23,9 +23,9 @@ try:
     )
     from PySide6.QtCore import Qt, QMimeData, Signal
     from PySide6.QtGui import QDragEnterEvent, QDropEvent, QAction, QIcon
-    PYQT_AVAILABLE = True
+    PYSIDE_AVAILABLE = True
 except ImportError:
-    PYQT_AVAILABLE = False
+    PYSIDE_AVAILABLE = False
     # Stub classes for import
     class QWidget:
         pass
@@ -33,7 +33,7 @@ except ImportError:
         def __init__(self, *args): pass
 
 
-class DocumentPanel(QWidget if PYQT_AVAILABLE else object):
+class DocumentPanel(QWidget if PYSIDE_AVAILABLE else object):
     """
     Panel for managing documents in a project.
 
@@ -43,15 +43,15 @@ class DocumentPanel(QWidget if PYQT_AVAILABLE else object):
         subquery_requested: Emitted when user requests a sub-query
     """
 
-    if PYQT_AVAILABLE:
+    if PYSIDE_AVAILABLE:
         document_selected = Signal(str)  # document_id
         selection_changed = Signal()
         subquery_requested = Signal(str, str, str)  # doc_id, query_type, query_text
         files_added = Signal()  # Emitted after files were added (for async extraction)
 
     def __init__(self, parent=None):
-        if not PYQT_AVAILABLE:
-            raise ImportError("PyQt6 is required. Install with: pip install PyQt6")
+        if not PYSIDE_AVAILABLE:
+            raise ImportError("PySide6 is required. Install with: pip install PySide6")
 
         super().__init__(parent)
         self._document_manager = None

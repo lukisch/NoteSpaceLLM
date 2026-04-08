@@ -26,12 +26,12 @@ try:
     )
     from PySide6.QtCore import Qt, QSize, QTimer, Slot
     from PySide6.QtGui import QAction, QIcon, QKeySequence
-    PYQT_AVAILABLE = True
+    PYSIDE_AVAILABLE = True
 except ImportError:
-    PYQT_AVAILABLE = False
+    PYSIDE_AVAILABLE = False
 
 
-if PYQT_AVAILABLE:
+if PYSIDE_AVAILABLE:
     from PySide6.QtCore import QThread, Signal
 
     class AnalysisWorker(QThread):
@@ -106,7 +106,7 @@ if PYQT_AVAILABLE:
             self.all_complete.emit(indexed, total)
 
 
-class MainWindow(QMainWindow if PYQT_AVAILABLE else object):
+class MainWindow(QMainWindow if PYSIDE_AVAILABLE else object):
     """
     Main application window.
 
@@ -131,8 +131,8 @@ class MainWindow(QMainWindow if PYQT_AVAILABLE else object):
     """
 
     def __init__(self):
-        if not PYQT_AVAILABLE:
-            raise ImportError("PyQt6 is required. Install with: pip install PyQt6")
+        if not PYSIDE_AVAILABLE:
+            raise ImportError("PySide6 is required. Install with: pip install PySide6")
 
         super().__init__()
 

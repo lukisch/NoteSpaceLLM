@@ -10,7 +10,7 @@ NoteSpaceLLM/
 │   │   ├── text_extractor.py     # Text aus PDF/DOCX/Excel/etc.
 │   │   ├── sub_query.py          # Detailrecherchen pro Dokument
 │   │   └── project.py            # Projektverwaltung, Profile
-│   ├── gui/                # PyQt6 Benutzeroberfläche
+│   ├── gui/                # PySide6 Benutzeroberfläche
 │   │   ├── main_window.py        # Hauptfenster
 │   │   ├── document_panel.py     # Drag&Drop, Kontextmenü
 │   │   ├── workflow_panel.py     # Workflow-Visualisierung

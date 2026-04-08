@@ -30,9 +30,9 @@ try:
     )
     from PySide6.QtCore import Qt, Signal, QThread, QTimer
     from PySide6.QtGui import QTextCursor, QFont
-    PYQT_AVAILABLE = True
+    PYSIDE_AVAILABLE = True
 except ImportError:
-    PYQT_AVAILABLE = False
+    PYSIDE_AVAILABLE = False
     class QWidget: pass
     class QThread: pass
     class Signal:
@@ -56,11 +56,11 @@ class ChatMessage:
             self.sources = []
 
 
-class MessageWidget(QFrame if PYQT_AVAILABLE else object):
+class MessageWidget(QFrame if PYSIDE_AVAILABLE else object):
     """Widget for displaying a single chat message."""
 
     def __init__(self, message: ChatMessage, parent=None):
-        if not PYQT_AVAILABLE:
+        if not PYSIDE_AVAILABLE:
             return
         super().__init__(parent)
         self.message = message
@@ -156,16 +156,16 @@ class MessageWidget(QFrame if PYQT_AVAILABLE else object):
         self.content_label.setText(content)
 
 
-class LLMWorker(QThread if PYQT_AVAILABLE else object):
+class LLMWorker(QThread if PYSIDE_AVAILABLE else object):
     """Worker thread for LLM API calls."""
 
-    if PYQT_AVAILABLE:
+    if PYSIDE_AVAILABLE:
         response_chunk = Signal(str)
         response_complete = Signal(str)
         error_occurred = Signal(str)
 
     def __init__(self, llm_client, prompt: str, context: str):
-        if not PYQT_AVAILABLE:
+        if not PYSIDE_AVAILABLE:
             return
         super().__init__()
         self.llm_client = llm_client
@@ -195,15 +195,15 @@ class LLMWorker(QThread if PYQT_AVAILABLE else object):
         self._stop_requested = True
 
 
-class RAGWorker(QThread if PYQT_AVAILABLE else object):
+class RAGWorker(QThread if PYSIDE_AVAILABLE else object):
     """Worker thread for RAG queries."""
 
-    if PYQT_AVAILABLE:
+    if PYSIDE_AVAILABLE:
         response_ready = Signal(dict)
         error_occurred = Signal(str)
 
     def __init__(self, rag_engine: 'RAGEngine', question: str, document_ids: List[str] = None, k: int = 5):
-        if not PYQT_AVAILABLE:
+        if not PYSIDE_AVAILABLE:
             return
         super().__init__()
         self.rag_engine = rag_engine
@@ -232,7 +232,7 @@ class RAGWorker(QThread if PYQT_AVAILABLE else object):
             self.error_occurred.emit(str(e))
 
 
-class ChatPanel(QWidget if PYQT_AVAILABLE else object):
+class ChatPanel(QWidget if PYSIDE_AVAILABLE else object):
     """
     Panel for interactive LLM chat.
 
@@ -240,12 +240,12 @@ class ChatPanel(QWidget if PYQT_AVAILABLE else object):
         message_sent: Emitted when user sends a message
     """
 
-    if PYQT_AVAILABLE:
+    if PYSIDE_AVAILABLE:
         message_sent = Signal(str)
 
     def __init__(self, parent=None):
-        if not PYQT_AVAILABLE:
-            raise ImportError("PyQt6 is required")
+        if not PYSIDE_AVAILABLE:
+            raise ImportError("PySide6 is required. Install with: pip install PySide6")
 
         super().__init__(parent)
         self._messages: List[ChatMessage] = []

@@ -25,9 +25,9 @@ try:
     )
     from PySide6.QtCore import Qt, Signal, QSize
     from PySide6.QtGui import QPainter, QColor, QPen, QFont
-    PYQT_AVAILABLE = True
+    PYSIDE_AVAILABLE = True
 except ImportError:
-    PYQT_AVAILABLE = False
+    PYSIDE_AVAILABLE = False
     class QWidget: pass
     class Signal:
         def __init__(self, *args): pass
@@ -164,14 +164,14 @@ DEFAULT_WORKFLOWS = {
 }
 
 
-class WorkflowStepWidget(QFrame if PYQT_AVAILABLE else object):
+class WorkflowStepWidget(QFrame if PYSIDE_AVAILABLE else object):
     """Widget representing a single workflow step."""
 
-    if PYQT_AVAILABLE:
+    if PYSIDE_AVAILABLE:
         clicked = Signal(str)  # step_id
 
     def __init__(self, step: WorkflowStep, parent=None):
-        if not PYQT_AVAILABLE:
+        if not PYSIDE_AVAILABLE:
             return
         super().__init__(parent)
         self.step = step
@@ -262,7 +262,7 @@ class WorkflowStepWidget(QFrame if PYQT_AVAILABLE else object):
         super().mousePressEvent(event)
 
 
-class WorkflowPanel(QWidget if PYQT_AVAILABLE else object):
+class WorkflowPanel(QWidget if PYSIDE_AVAILABLE else object):
     """
     Panel for workflow selection and visualization.
 
@@ -271,14 +271,14 @@ class WorkflowPanel(QWidget if PYQT_AVAILABLE else object):
         step_clicked: Emitted when a workflow step is clicked
     """
 
-    if PYQT_AVAILABLE:
+    if PYSIDE_AVAILABLE:
         workflow_changed = Signal(str)  # workflow_id
         step_clicked = Signal(str)  # step_id
         start_requested = Signal()
 
     def __init__(self, parent=None):
-        if not PYQT_AVAILABLE:
-            raise ImportError("PyQt6 is required")
+        if not PYSIDE_AVAILABLE:
+            raise ImportError("PySide6 is required. Install with: pip install PySide6")
 
         super().__init__(parent)
         self._workflows = dict(DEFAULT_WORKFLOWS)
@@ -485,11 +485,11 @@ class WorkflowPanel(QWidget if PYQT_AVAILABLE else object):
             pass
 
 
-class WorkflowEditorDialog(QDialog if PYQT_AVAILABLE else object):
+class WorkflowEditorDialog(QDialog if PYSIDE_AVAILABLE else object):
     """Dialog for editing workflow steps."""
 
     def __init__(self, workflow: Workflow, parent=None):
-        if not PYQT_AVAILABLE:
+        if not PYSIDE_AVAILABLE:
             return
         super().__init__(parent)
         self.workflow = workflow

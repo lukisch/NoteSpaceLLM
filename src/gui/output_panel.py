@@ -24,19 +24,19 @@ try:
     )
     from PySide6.QtCore import Qt, Signal
     from PySide6.QtGui import QFont, QTextCharFormat, QSyntaxHighlighter
-    PYQT_AVAILABLE = True
+    PYSIDE_AVAILABLE = True
 except ImportError:
-    PYQT_AVAILABLE = False
+    PYSIDE_AVAILABLE = False
     class QWidget: pass
     class Signal:
         def __init__(self, *args): pass
 
 
-class MarkdownHighlighter(QSyntaxHighlighter if PYQT_AVAILABLE else object):
+class MarkdownHighlighter(QSyntaxHighlighter if PYSIDE_AVAILABLE else object):
     """Simple Markdown syntax highlighter."""
 
     def __init__(self, document):
-        if not PYQT_AVAILABLE:
+        if not PYSIDE_AVAILABLE:
             return
         super().__init__(document)
         self._setup_formats()
@@ -82,7 +82,7 @@ class MarkdownHighlighter(QSyntaxHighlighter if PYQT_AVAILABLE else object):
             self.setFormat(0, 2, self.list_format)
 
 
-class OutputPanel(QWidget if PYQT_AVAILABLE else object):
+class OutputPanel(QWidget if PYSIDE_AVAILABLE else object):
     """
     Panel for report display and export.
 
@@ -90,13 +90,13 @@ class OutputPanel(QWidget if PYQT_AVAILABLE else object):
         export_requested: Emitted when export is requested
     """
 
-    if PYQT_AVAILABLE:
+    if PYSIDE_AVAILABLE:
         export_requested = Signal(list, str)  # formats, directory
         prompt_export_requested = Signal()  # Prompt als .md exportieren
 
     def __init__(self, parent=None):
-        if not PYQT_AVAILABLE:
-            raise ImportError("PyQt6 is required")
+        if not PYSIDE_AVAILABLE:
+            raise ImportError("PySide6 is required. Install with: pip install PySide6")
 
         super().__init__(parent)
         self._current_content = ""

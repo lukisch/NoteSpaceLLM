@@ -27,7 +27,7 @@ def check_dependencies():
     try:
         from PySide6.QtWidgets import QApplication
     except ImportError:
-        missing.append("PyQt6 (pip install PyQt6)")
+        missing.append("PySide6 (pip install PySide6)")
 
     # Optional but recommended
     optional_missing = []

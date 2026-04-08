@@ -1,5 +1,5 @@
 """
-GUI Module - PyQt6-based User Interface
+GUI Module - PySide6-based User Interface
 """
 
 from .main_window import MainWindow
