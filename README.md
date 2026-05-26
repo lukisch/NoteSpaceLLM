@@ -216,6 +216,10 @@ NoteSpaceLLM verarbeitet Projekte, Dokumentindexe und Exporte standardmäßig lo
 
 Wenn externe oder entfernte LLM-Provider wie OpenAI, Anthropic, Claude Code oder ein Remote-Ollama-Server gewählt werden, können Prompts und ausgewählte Dokumentauszüge an diese Dienste oder Server übertragen werden. Verwende für vertrauliche Dokumente bevorzugt lokale Modelle und prüfe vor dem Teilen eines Projektordners die enthaltenen Daten.
 
+## Plattformstrategie
+
+Die Desktop-App bleibt die autoritative Vollversion für lokale Dokumente, RAG-Index, LLM-Provider und vertrauliche Arbeitsstände. Für Android, iOS und Browser ist ein Web/PWA-Companion als getrennte Linie geplant, der über `notespacellm-workspace-v1.json` mit der Desktop-App Daten austauscht. Details stehen in `PORTIERUNGSPLAN.md` und `EXPORTFORMAT.md`.
+
 ## Entwicklung
 
 Die Anwendung ist modular aufgebaut und trennt Dokumentverwaltung, Text-Extraktion, RAG-Index, LLM-Provider und Report-Export.
