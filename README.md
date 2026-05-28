@@ -4,6 +4,46 @@
 
 # NoteSpaceLLM
 
+**Local NotebookLM alternative for private document analysis, RAG-assisted research, and multi-format report generation.**
+
+NoteSpaceLLM is an offline-first PySide6 desktop app for working with PDFs,
+Word files, Markdown, mail exports, notes, and research folders. It keeps
+project data local by default, supports local or remote Ollama, OpenAI,
+Anthropic and Claude Code workflows, and exports analysis results to Markdown,
+PDF, DOCX, HTML and TXT. A lightweight Web/PWA Companion is now available for
+reviewing exported workspaces on Android, iOS and browser devices without
+uploading documents to a server.
+
+**Best-fit searches:** NotebookLM alternative, local RAG document analysis,
+private document chat, PySide6 research tool, offline AI report generator,
+local-first document workflow.
+
+## English quick start
+
+```bash
+git clone https://github.com/file-bricks/NoteSpaceLLM.git
+cd NoteSpaceLLM
+pip install -r requirements.txt
+python main.py
+```
+
+Run the test and compile smoke checks with:
+
+```bash
+python -m unittest discover -s tests -v
+python -m compileall -q main.py manage_translations.py translator.py src
+cd web_companion
+node --test tests/library.test.mjs
+```
+
+## Screenshots
+
+![NoteSpaceLLM desktop main window](README/screenshots/main.png)
+
+![NoteSpaceLLM Web/PWA Companion](README/screenshots/web-companion.png)
+
+## Deutsch
+
 Ein lokaler, datenschutzfreundlicher Ersatz für Google NotebookLM zur Dokumentenanalyse und Berichterstellung.
 
 ## Features
@@ -21,7 +61,7 @@ Ein lokaler, datenschutzfreundlicher Ersatz für Google NotebookLM zur Dokumente
 - **Umlaut-sichere Oberfläche**: Deutsche UI-Texte verwenden echte Umlaute; der Übersetzungs-Scan vermeidet englische False Positives
 - **Profile**: Wiederverwendbare Ausgabeformat-Kombinationen
 
-## Screenshot
+## Desktop-Screenshot
 
 ![NoteSpaceLLM Hauptfenster](README/screenshots/main.png)
 

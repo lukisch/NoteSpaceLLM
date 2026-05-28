@@ -6,5 +6,5 @@
   "background_color": "#f4efe6",
   "theme_color": "#0c4a6e",
   "lang": "de",
-  "description": "Lokaler Web/PWA-Companion für exportierte NoteSpaceLLM-Workspaces."
+  "description": "Lokaler Web/PWA-Companion für exportierte NoteSpaceLLM-Workspaces mit Review-Notizen ohne Server-Upload."
 }

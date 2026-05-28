@@ -9,6 +9,7 @@ Format basiert auf [Keep a Changelog](https://keepachangelog.com/de/1.1.0/).
 - Portierungsplan für Windows Store, Web/PWA, Android, iOS, macOS und Linux
 - Geplantes Austauschformat `notespacellm-workspace-v1.json` für Desktop-zu-Companion-Workflows
 - Erster Web/PWA-Companion unter `web_companion/` mit lokalem Workspace-Import, read-only Bericht-/Dokumentansicht und Export für Review-Notizen
+- README-Screenshot und SEO-Metadaten für den Web/PWA-Companion
 - Remote-Ollama-Anbindung: Konfigurierbare Server-URL pro Projekt
 - API-Key-Authentifizierung für Ollama-Proxies (Bearer Token)
 - GUI: URL- und API-Key-Felder im LLM-Einstellungsdialog
