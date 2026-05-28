@@ -1,0 +1,10 @@
+{
+  "name": "NoteSpaceLLM Companion",
+  "short_name": "NoteSpaceLLM",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#f4efe6",
+  "theme_color": "#0c4a6e",
+  "lang": "de",
+  "description": "Lokaler Web/PWA-Companion für exportierte NoteSpaceLLM-Workspaces."
+}

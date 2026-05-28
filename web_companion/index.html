@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>NoteSpaceLLM Companion</title>
+  <meta name="description" content="Lokaler Web/PWA-Companion für exportierte NoteSpaceLLM-Workspaces.">
+  <meta name="theme-color" content="#0c4a6e">
+  <link rel="manifest" href="./manifest.webmanifest">
+  <link rel="stylesheet" href="./app.css">
+</head>
+<body>
+  <div class="background-glow background-glow-a"></div>
+  <div class="background-glow background-glow-b"></div>
+  <main class="shell">
+    <section class="hero card">
+      <p class="eyebrow">NoteSpaceLLM Companion</p>
+      <h1>Lokaler Review-Reader für exportierte Workspaces</h1>
+      <p class="hero-copy">
+        Der Companion importiert <code>notespacellm-workspace-v1.json</code> direkt im Browser,
+        bleibt read-only für den Workspace und exportiert nur eigene Review-Notizen.
+      </p>
+      <div class="hero-badges">
+        <span>Kein Upload</span>
+        <span>Offline-fähig</span>
+        <span>Android / iOS / Web</span>
+      </div>
+      <div class="import-panel">
+        <label class="file-button" for="workspace-file">Workspace wählen</label>
+        <input id="workspace-file" type="file" accept=".json,application/json">
+        <button id="load-demo" class="secondary-button" type="button">Demo laden</button>
+      </div>
+      <p id="status-message" class="status-message" role="status">
+        Noch kein Workspace geladen.
+      </p>
+    </section>
+
+    <section class="dashboard">
+      <article class="card summary-card">
+        <h2>Überblick</h2>
+        <dl id="workspace-summary" class="summary-grid">
+          <div>
+            <dt>Projekt</dt>
+            <dd>-</dd>
+          </div>
+          <div>
+            <dt>Frage</dt>
+            <dd>-</dd>
+          </div>
+          <div>
+            <dt>Dokumente</dt>
+            <dd>-</dd>
+          </div>
+          <div>
+            <dt>Auszüge</dt>
+            <dd>-</dd>
+          </div>
+          <div>
+            <dt>Bericht</dt>
+            <dd>-</dd>
+          </div>
+          <div>
+            <dt>Provider</dt>
+            <dd>-</dd>
+          </div>
+        </dl>
+      </article>
+
+      <article class="card report-card">
+        <div class="card-header">
+          <h2>Bericht</h2>
+          <span id="report-badge" class="pill">Kein Bericht</span>
+        </div>
+        <h3 id="report-title">Noch kein Export geladen</h3>
+        <pre id="report-preview" class="report-preview">Importiere einen Workspace, um Bericht und Metadaten lokal anzuzeigen.</pre>
+      </article>
+    </section>
+
+    <section class="content-grid">
+      <article class="card">
+        <div class="card-header">
+          <h2>Dokumente</h2>
+          <span id="document-badge" class="pill">0 Einträge</span>
+        </div>
+        <div id="document-list" class="stacked-list empty-state">
+          Noch keine Dokumente geladen.
+        </div>
+      </article>
+
+      <article class="card">
+        <div class="card-header">
+          <h2>Review-Notizen</h2>
+          <span id="notes-badge" class="pill">Lokal im Browser</span>
+        </div>
+        <label class="notes-label" for="review-notes">
+          Eigene Beobachtungen, offene Fragen oder mobile Review-Punkte:
+        </label>
+        <textarea id="review-notes" rows="12" placeholder="Beispiel: Abschnitt 3 genauer prüfen, Quellenvergleich mit Bericht vom Vortag nötig ..."></textarea>
+        <div class="notes-actions">
+          <button id="export-notes" type="button">Review-Notizen exportieren</button>
+          <button id="clear-notes" class="secondary-button" type="button">Notizen leeren</button>
+        </div>
+      </article>
+    </section>
+  </main>
+
+  <script type="module" src="./app.js"></script>
+</body>
+</html>

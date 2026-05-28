@@ -220,6 +220,28 @@ Wenn externe oder entfernte LLM-Provider wie OpenAI, Anthropic, Claude Code oder
 
 Die Desktop-App bleibt die autoritative Vollversion für lokale Dokumente, RAG-Index, LLM-Provider und vertrauliche Arbeitsstände. Für Android, iOS und Browser ist ein Web/PWA-Companion als getrennte Linie geplant, der über `notespacellm-workspace-v1.json` mit der Desktop-App Daten austauscht. Details stehen in `PORTIERUNGSPLAN.md` und `EXPORTFORMAT.md`.
 
+### Web/PWA-Companion
+
+Unter `web_companion/` liegt jetzt der erste read-only Companion-Strang für
+Android, iOS und Browser. Er importiert exportierte
+`notespacellm-workspace-v1.json`-Dateien lokal im Browser, zeigt Bericht,
+Dokumentmetadaten und ausgewählte Auszüge an und kann eigene Review-Notizen als
+Markdown exportieren.
+
+Für lokale Browser-Tests reicht ein kleiner statischer Server:
+
+```powershell
+$env:PYTHONIOENCODING='utf-8'
+python -m http.server 8765 -d web_companion
+```
+
+Die Companion-Smokes laufen über:
+
+```powershell
+cd web_companion
+node --test tests/library.test.mjs
+```
+
 ## Entwicklung
 
 Die Anwendung ist modular aufgebaut und trennt Dokumentverwaltung, Text-Extraktion, RAG-Index, LLM-Provider und Report-Export.

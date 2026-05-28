@@ -1,0 +1,8 @@
+{
+  "name": "notespacellm-web-companion",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "node --test tests/library.test.mjs"
+  }
+}

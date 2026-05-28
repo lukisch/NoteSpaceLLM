@@ -1,0 +1,57 @@
+import test from "node:test";
+import assert from "node:assert/strict";
+
+import {
+  buildReviewMarkdown,
+  getDemoWorkspace,
+  normalizeWorkspacePayload,
+  parseWorkspaceText
+} from "../library.js";
+
+test("normalizeWorkspacePayload accepts minimal valid payload", () => {
+  const payload = normalizeWorkspacePayload({
+    schema_version: "notespacellm-workspace-v1",
+    workspace: {
+      title: "Review-Projekt"
+    },
+    documents: [
+      {
+        name: "quelle.pdf",
+        excerpts: [{ text: "Wichtiger Auszug." }]
+      }
+    ]
+  });
+
+  assert.equal(payload.workspace.title, "Review-Projekt");
+  assert.equal(payload.summary.document_count, 1);
+  assert.equal(payload.summary.excerpt_count, 1);
+  assert.equal(payload.documents[0].id, "doc-1");
+});
+
+test("parseWorkspaceText rejects unsupported schema versions", () => {
+  assert.throws(
+    () => parseWorkspaceText(JSON.stringify({ schema_version: "notespacellm-workspace-v2" })),
+    /Nicht unterstützte Schema-Version/
+  );
+});
+
+test("buildReviewMarkdown includes workspace metadata and notes", () => {
+  const workspace = getDemoWorkspace();
+  const markdown = buildReviewMarkdown(workspace, "Zwei Quellen morgen gegenlesen.");
+
+  assert.match(markdown, /Review-Notizen: Demo: Forschungsnotizen/);
+  assert.match(markdown, /Leitfrage: Welche Kernthesen tragen den Bericht am stärksten\?/);
+  assert.match(markdown, /Zwei Quellen morgen gegenlesen\./);
+});
+
+test("normalizeWorkspacePayload ignores malformed documents container", () => {
+  const payload = normalizeWorkspacePayload({
+    schema_version: "notespacellm-workspace-v1",
+    documents: {
+      name: "falsch"
+    }
+  });
+
+  assert.equal(payload.summary.document_count, 0);
+  assert.deepEqual(payload.documents, []);
+});
