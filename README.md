@@ -265,8 +265,9 @@ Die Desktop-App bleibt die autoritative Vollversion für lokale Dokumente, RAG-I
 Unter `web_companion/` liegt jetzt der erste read-only Companion-Strang für
 Android, iOS und Browser. Er importiert exportierte
 `notespacellm-workspace-v1.json`-Dateien lokal im Browser, zeigt Bericht,
-Dokumentmetadaten und ausgewählte Auszüge an und kann eigene Review-Notizen als
-Markdown exportieren.
+Dokumentmetadaten und ausgewählte Auszüge an, stellt den zuletzt geladenen
+Workspace lokal für Offline-Starts wieder her und kann eigene Review-Notizen
+als Markdown exportieren.
 
 Für lokale Browser-Tests reicht ein kleiner statischer Server:
 
@@ -281,6 +282,9 @@ Die Companion-Smokes laufen über:
 cd web_companion
 node --test tests/library.test.mjs
 ```
+
+Der mobile Android-/iOS-PWA-Pfad ist in `web_companion/PWA_TESTPLAN.md`
+konkret dokumentiert.
 
 ## Entwicklung
 

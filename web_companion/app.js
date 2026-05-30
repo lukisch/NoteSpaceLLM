@@ -1,19 +1,26 @@
 import {
   buildReviewMarkdown,
+  getPlatformGuide,
   getDemoWorkspace,
   parseWorkspaceText
 } from "./library.js";
 
 const STORAGE_PREFIX = "notespacellm-companion-notes:";
+const WORKSPACE_CACHE_KEY = "notespacellm-companion:last-workspace";
 
 const elements = {
   clearNotes: document.querySelector("#clear-notes"),
+  clearWorkspaceCache: document.querySelector("#clear-workspace-cache"),
+  cacheHint: document.querySelector("#cache-hint"),
   documentBadge: document.querySelector("#document-badge"),
   documentList: document.querySelector("#document-list"),
   exportNotes: document.querySelector("#export-notes"),
   fileInput: document.querySelector("#workspace-file"),
+  installHint: document.querySelector("#install-hint"),
   loadDemo: document.querySelector("#load-demo"),
   notes: document.querySelector("#review-notes"),
+  offlineHint: document.querySelector("#offline-hint"),
+  platformPill: document.querySelector("#platform-pill"),
   reportBadge: document.querySelector("#report-badge"),
   reportPreview: document.querySelector("#report-preview"),
   reportTitle: document.querySelector("#report-title"),
@@ -22,6 +29,7 @@ const elements = {
 };
 
 let currentWorkspace = null;
+let currentPlatformGuide = getPlatformGuide(globalThis.navigator?.userAgent || "");
 
 function setStatus(message, isError = false) {
   elements.status.textContent = message;
@@ -38,6 +46,49 @@ function saveNotes() {
     return;
   }
   localStorage.setItem(workspaceStorageKey(currentWorkspace), elements.notes.value);
+}
+
+function updateCacheHint(title = "") {
+  elements.cacheHint.textContent = title
+    ? `Letzter Offline-Workspace: ${title}.`
+    : "Noch kein Workspace für Offline-Starts gespeichert.";
+}
+
+function updateOfflineHint() {
+  const state = navigator.onLine
+    ? "Aktuell online; ein frischer Import kann lokal zwischengespeichert werden."
+    : "Aktuell offline; der letzte lokal gespeicherte Workspace bleibt verfügbar.";
+  elements.offlineHint.textContent = `${currentPlatformGuide.offline_hint} ${state}`;
+}
+
+function applyPlatformGuide() {
+  currentPlatformGuide = getPlatformGuide(globalThis.navigator?.userAgent || "");
+  elements.platformPill.textContent = currentPlatformGuide.label;
+  elements.installHint.textContent = currentPlatformGuide.install_hint;
+  updateOfflineHint();
+}
+
+function saveWorkspaceCache(payload) {
+  localStorage.setItem(WORKSPACE_CACHE_KEY, JSON.stringify(payload));
+  updateCacheHint(payload.workspace.title);
+}
+
+function loadWorkspaceCache() {
+  const raw = localStorage.getItem(WORKSPACE_CACHE_KEY);
+  if (!raw) {
+    updateCacheHint();
+    return null;
+  }
+
+  try {
+    const payload = parseWorkspaceText(raw);
+    updateCacheHint(payload.workspace.title);
+    return payload;
+  } catch {
+    localStorage.removeItem(WORKSPACE_CACHE_KEY);
+    updateCacheHint();
+    return null;
+  }
 }
 
 function loadNotes(payload) {
@@ -123,12 +174,18 @@ function renderDocuments(payload) {
   });
 }
 
-function renderWorkspace(payload, sourceLabel) {
+function renderWorkspace(payload, sourceLabel, options = {}) {
+  const { persist = true } = options;
   currentWorkspace = payload;
   renderSummary(payload);
   renderReport(payload);
   renderDocuments(payload);
   loadNotes(payload);
+  if (persist) {
+    saveWorkspaceCache(payload);
+  } else {
+    updateCacheHint(payload.workspace.title);
+  }
   setStatus(`${sourceLabel} geladen: ${payload.workspace.title}`);
 }
 
@@ -141,6 +198,7 @@ async function handleFile(file) {
     const text = await file.text();
     const payload = parseWorkspaceText(text);
     renderWorkspace(payload, file.name);
+    elements.fileInput.value = "";
   } catch (error) {
     setStatus(error.message, true);
   }
@@ -176,11 +234,24 @@ elements.clearNotes.addEventListener("click", () => {
   setStatus("Lokale Review-Notizen geleert.");
 });
 
+elements.clearWorkspaceCache.addEventListener("click", () => {
+  localStorage.removeItem(WORKSPACE_CACHE_KEY);
+  updateCacheHint();
+  setStatus("Lokaler Workspace-Cache gelöscht. Die aktuelle Ansicht bleibt bis zum Neuladen sichtbar.");
+});
+
 elements.notes.addEventListener("input", saveNotes);
 
 const params = new URLSearchParams(window.location.search);
+applyPlatformGuide();
+
 if (params.get("demo") === "1") {
   renderWorkspace(getDemoWorkspace(), "Demo-Workspace");
+} else {
+  const cachedWorkspace = loadWorkspaceCache();
+  if (cachedWorkspace) {
+    renderWorkspace(cachedWorkspace, "Lokaler Offline-Workspace", { persist: false });
+  }
 }
 
 if ("serviceWorker" in navigator) {
@@ -190,3 +261,6 @@ if ("serviceWorker" in navigator) {
     });
   });
 }
+
+window.addEventListener("online", updateOfflineHint);
+window.addEventListener("offline", updateOfflineHint);

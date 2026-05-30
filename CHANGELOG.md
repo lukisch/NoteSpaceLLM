@@ -9,6 +9,7 @@ Format basiert auf [Keep a Changelog](https://keepachangelog.com/de/1.1.0/).
 - Portierungsplan für Windows Store, Web/PWA, Android, iOS, macOS und Linux
 - Geplantes Austauschformat `notespacellm-workspace-v1.json` für Desktop-zu-Companion-Workflows
 - Erster Web/PWA-Companion unter `web_companion/` mit lokalem Workspace-Import, read-only Bericht-/Dokumentansicht und Export für Review-Notizen
+- `web_companion/PWA_TESTPLAN.md` für Android-/iOS-PWA-Smokes zu Installierbarkeit, Import, Offline-Start und Review-Notiz-Export
 - README-Screenshot und SEO-Metadaten für den Web/PWA-Companion
 - Remote-Ollama-Anbindung: Konfigurierbare Server-URL pro Projekt
 - API-Key-Authentifizierung für Ollama-Proxies (Bearer Token)
@@ -21,6 +22,7 @@ Format basiert auf [Keep a Changelog](https://keepachangelog.com/de/1.1.0/).
 ### Geändert / Changed
 - System-Prompts optimiert für kleine Modelle (qwen3:4b u.a.)
 - RAG-Prompt kompakter -- weniger Token-Overhead
+- Der Web/PWA-Companion stellt den zuletzt geladenen Workspace lokal für Offline-Starts wieder her und zeigt Android-/iOS-Install-Hinweise direkt in der UI
 - ProjectSettings: Neue Felder `ollama_base_url` und `ollama_api_key` (abwärtskompatibel)
 - Repository-Metadaten auf `file-bricks/NoteSpaceLLM`, AGPL-3.0 und DCO aktualisiert
 - GitHub Actions führt neben dem Compile-Smoke-Test jetzt auch die Unit-Tests aus

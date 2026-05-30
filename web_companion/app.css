@@ -158,6 +158,35 @@ h3 {
   margin-top: 24px;
 }
 
+.mobile-pwa-panel {
+  background: rgba(255, 255, 255, 0.56);
+  border: 1px solid rgba(12, 74, 110, 0.10);
+  border-radius: var(--radius-lg);
+  margin-top: 20px;
+  padding: 18px;
+}
+
+.subtle-pill {
+  background: rgba(255, 255, 255, 0.88);
+}
+
+.mobile-copy {
+  color: var(--muted);
+  margin: 14px 0 10px;
+}
+
+.hint-list {
+  color: var(--muted);
+  display: grid;
+  gap: 10px;
+  margin: 0 0 16px;
+  padding-left: 20px;
+}
+
+.hint-list li {
+  padding-left: 4px;
+}
+
 input[type="file"] {
   display: none;
 }
@@ -356,6 +385,10 @@ code {
   .card {
     border-radius: 22px;
     padding: 18px;
+  }
+
+  .mobile-pwa-panel {
+    padding: 16px;
   }
 
   h1 {

@@ -10,6 +10,7 @@ Review-Notizen.
 - lokaler Import ohne Server-Upload
 - mobile Lesbarkeit für Android, iOS und Browser
 - Bericht, Dokumentmetadaten und ausgewählte Auszüge anzeigen
+- zuletzt geladenen Workspace lokal für Offline-Starts wiederherstellen
 - eigene Review-Notizen lokal speichern und als Markdown exportieren
 
 ## Lokaler Start
@@ -33,6 +34,8 @@ http://127.0.0.1:8765
 cd web_companion
 node --test tests/library.test.mjs
 ```
+
+Der konkrete Android-/iOS-PWA-Ablauf steht in `PWA_TESTPLAN.md`.
 
 ## Scope des ersten Strangs
 

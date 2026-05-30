@@ -3,6 +3,7 @@ import assert from "node:assert/strict";
 
 import {
   buildReviewMarkdown,
+  getPlatformGuide,
   getDemoWorkspace,
   normalizeWorkspacePayload,
   parseWorkspaceText
@@ -54,4 +55,20 @@ test("normalizeWorkspacePayload ignores malformed documents container", () => {
 
   assert.equal(payload.summary.document_count, 0);
   assert.deepEqual(payload.documents, []);
+});
+
+test("getPlatformGuide returns Android-specific install guidance", () => {
+  const guide = getPlatformGuide("Mozilla/5.0 (Linux; Android 14; Pixel 8) AppleWebKit/537.36 Chrome/125.0 Mobile Safari/537.36");
+
+  assert.equal(guide.label, "Android");
+  assert.match(guide.install_hint, /Startbildschirm hinzufügen|Installieren/);
+  assert.match(guide.offline_hint, /Offline-Start|lokal/i);
+});
+
+test("getPlatformGuide returns iOS-specific install guidance", () => {
+  const guide = getPlatformGuide("Mozilla/5.0 (iPhone; CPU iPhone OS 17_5 like Mac OS X) AppleWebKit/605.1.15 Version/17.5 Mobile/15E148 Safari/604.1");
+
+  assert.equal(guide.label, "iPhone / iPad");
+  assert.match(guide.install_hint, /Home-Bildschirm/);
+  assert.match(guide.offline_hint, /ohne Netz|erneut geöffnet/i);
 });

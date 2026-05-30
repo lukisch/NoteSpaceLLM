@@ -83,7 +83,7 @@ Kurzfassung:
 | P0 | Exportformat finalisieren und Desktop-Export ergänzen | `notespacellm-workspace-v1.json` kann aus der Desktop-App erzeugt werden |
 | P1 | Windows-Store-Readiness prüfen | Store-Listing, Privacy-Text, Screenshots, AGPL-/PyMuPDF-Hinweis und WACK-Plan stehen |
 | P1 | Web/PWA-Companion als neuer, getrennter Strang starten | `web_companion/` importiert Workspace-JSON lokal im Browser, zeigt Bericht und Dokumente read-only und exportiert Review-Notizen |
-| P2 | Android/iOS über PWA testen | Mobile Review- und Leseflüsse funktionieren ohne native Desktop-Funktionen |
+| P2 | Android/iOS über PWA testen | Mobile Review- und Leseflüsse funktionieren ohne native Desktop-Funktionen; letzter Workspace steht lokal auch für Offline-Starts bereit |
 | P3 | macOS/Linux Smoke-Tests | Start, Import, Export und einfache Analyse laufen aus der PySide6-Codebasis |
 
 ## Nicht-Ziele
@@ -109,7 +109,19 @@ LLM-Zugänge oder Synchronisationslogik in den Browser zu ziehen. Die nächsten
 Schritte bleiben Desktop-Export, Android-/iOS-Smokes und spätere
 Konfliktregeln für optionale Rückkanäle.
 
+## Update 2026-05-30: mobile PWA-Readiness
+
+Der Companion wurde für den geplanten Android-/iOS-PWA-Pfad gezielt
+weitergeführt:
+
+- Der zuletzt geladene Workspace wird lokal zwischengespeichert und steht für
+  Offline-Starts erneut bereit.
+- Die Oberfläche zeigt plattformspezifische Install-Hinweise für Android und
+  iPhone/iPad direkt im Browser an.
+- `web_companion/PWA_TESTPLAN.md` dokumentiert den reproduzierbaren Testpfad
+  für Installierbarkeit, Import, Offline-Start und Review-Notiz-Export.
+
 ## Status
 
-Plan aktiv. P1-Companion gestartet; P0-Workspace-Export und mobile Smokes sind
-die nächsten Plattformschritte.
+Plan aktiv. P1-Companion gestartet; mobile PWA-Readiness dokumentiert und im
+Companion vorbereitet. Offen bleiben P0-Workspace-Export und echte Geräte-Smokes.

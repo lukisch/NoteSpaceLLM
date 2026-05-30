@@ -146,6 +146,32 @@ export function buildReviewMarkdown(workspacePayload, notes) {
   ].join("\n");
 }
 
+export function getPlatformGuide(userAgent = "") {
+  const agent = asString(userAgent).toLowerCase();
+
+  if (agent.includes("android")) {
+    return {
+      label: "Android",
+      install_hint: "In Chrome über das Menü oder das Installieren-Symbol zum Startbildschirm hinzufügen.",
+      offline_hint: "Nach dem ersten Import bleibt der zuletzt geladene Workspace lokal für einen späteren Offline-Start verfügbar."
+    };
+  }
+
+  if (/(iphone|ipad|ipod)/.test(agent)) {
+    return {
+      label: "iPhone / iPad",
+      install_hint: "In Safari über Teilen → Zum Home-Bildschirm die PWA sichern.",
+      offline_hint: "Nach dem ersten Import kann der zuletzt geladene Workspace auch ohne Netz erneut geöffnet werden."
+    };
+  }
+
+  return {
+    label: "Browser",
+    install_hint: "Der Companion läuft im Browser; auf Android oder iOS kann er zusätzlich als PWA gespeichert werden.",
+    offline_hint: "Für einen Offline-Start muss mindestens einmal ein Workspace lokal importiert worden sein."
+  };
+}
+
 export function getDemoWorkspace() {
   return normalizeWorkspacePayload({
     schema_version: "notespacellm-workspace-v1",
